@@ -11,6 +11,6 @@ fun String.to_Addr_Port () : Addr_Port {
     }
 }
 
-fun Addr_Port.toColon () : String {
+fun Addr_Port.from_Addr_Port () : String {
     return "$first:$second"
 }
