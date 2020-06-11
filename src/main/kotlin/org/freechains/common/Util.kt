@@ -16,13 +16,15 @@ const val REVISION = 0
 const val VERSION  = "v$MAJOR.$MINOR.$REVISION"
 const val PRE      = "FC $VERSION"
 
-const val PORT_8330 = 8888  // TODO: back to 8330
+const val PORT_8330 = 8330 //8888  // TODO: back to 8330
 
 const val ms   = 1.toLong()
 const val sec  = 1000* ms
 const val min  = 60* sec
 const val hour = 60* min
 const val day  = 24* hour
+
+const val T5S_socket = 5*sec
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -35,7 +37,7 @@ fun String.listSplit () : List<String> {
 
 fun Socket_5s (addr: String, port: Int) : Socket {
     val s = Socket(addr,port)
-    s.soTimeout = 5000
+    s.soTimeout = T5S_socket.toInt()
     return s
 }
 
