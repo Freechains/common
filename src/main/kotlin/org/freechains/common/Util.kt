@@ -1,10 +1,12 @@
 package org.freechains.common
 
+import org.freechains.cli.main_cli
 import java.net.Socket
 import java.io.DataInputStream
 import java.io.DataOutputStream
 import java.net.ConnectException
 import java.net.SocketTimeoutException
+import kotlin.system.exitProcess
 
 typealias HKey = String
 typealias Addr_Port = Pair<String,Int>
@@ -48,12 +50,45 @@ inline fun assert_ (value: Boolean, lazyMessage: () -> Any = {"Assertion failed"
     }
 }
 
-fun catch_all (def: String, f: ()->Pair<Boolean,String>): Pair<Boolean,String> {
-    try {
-        return f()
+///////////////////////////////////////////////////////////////////////////////
+
+fun main_ (f: ()->Pair<Boolean,String>) {
+    f().let { (ok,msg) ->
+        if (ok) {
+            if (msg.isNotEmpty()) {
+                println(msg)
+            }
+        } else {
+            System.err.println(msg)
+            exitProcess(1)
+        }
+    }
+}
+
+fun main_assert_ (f: ()->Pair<Boolean,String>) : String {
+    return f().let { (ok,msg) ->
+        assert_(ok) { msg }
+        msg
+    }
+}
+
+fun main_catch_ (
+        app: String, version: String, help: String, args: Array<String>,
+        f: (List<String>,Map<String,String?>)->Pair<Boolean,String>
+): Pair<Boolean,String> {
+    val full = "$app ${args.joinToString(" ")}"
+
+    return try {
+        val (cmds, opts) = args.cmds_opts()
+        when {
+            opts.containsKey("--help")    -> Pair(true,  help)
+            opts.containsKey("--version") -> Pair(true,  version)
+            (cmds.size == 0)              -> Pair(false, help)
+            else                          -> f(cmds, opts)
+        }
     } catch (e: AssertionError) {
         if (e.message.equals("Assertion failed")) {
-            return Pair(false, "! TODO - $e - ${e.message} - $def")
+            return Pair(false, "! TODO - $e - ${e.message} - $full")
         } else {
             return Pair(false, "! " + e.message!!)
         }
@@ -63,7 +98,7 @@ fun catch_all (def: String, f: ()->Pair<Boolean,String>): Pair<Boolean,String> {
     } catch (e: SocketTimeoutException) {
         return Pair(false, "! connection timeout")
     } catch (e: Throwable) {
-        return Pair(false, "! TODO - $e - ${e.message} - $def")
+        return Pair(false, "! TODO - $e - ${e.message} - $full")
     }
 }
 
