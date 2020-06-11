@@ -7,10 +7,12 @@ import java.net.ConnectException
 import java.net.SocketTimeoutException
 
 typealias HKey = String
+typealias Addr_Port = Pair<String,Int>
+typealias Wait = (() -> Unit)
 
 const val MAJOR    = 0
-const val MINOR    = 6
-const val REVISION = 2
+const val MINOR    = 7
+const val REVISION = 0
 const val VERSION  = "v$MAJOR.$MINOR.$REVISION"
 const val PRE      = "FC $VERSION"
 
@@ -21,6 +23,8 @@ const val sec  = 1000* ms
 const val min  = 60* sec
 const val hour = 60* min
 const val day  = 24* hour
+
+///////////////////////////////////////////////////////////////////////////////
 
 fun String.listSplit () : List<String> {
     return when (this.isEmpty()) {
@@ -61,13 +65,7 @@ fun catch_all (def: String, f: ()->Pair<Boolean,String>): Pair<Boolean,String> {
     }
 }
 
-/*
- * (\n) = (0xA)
- * (\r) = (0xD)
- * Windows = (\r\n)
- * Unix = (\n)
- * Mac = (\r)
- */
+///////////////////////////////////////////////////////////////////////////////
 
 fun DataInputStream.readLineX () : String {
     val ret = mutableListOf<Byte>()
@@ -90,6 +88,8 @@ fun DataOutputStream.writeLineX (v: String) {
     this.writeByte('\n'.toInt())
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
 fun Array<String>.cmds_opts () : Pair<List<String>,Map<String,String?>> {
     val cmds = this.filter { !it.startsWith("--") }
     val opts = this
@@ -104,4 +104,19 @@ fun Array<String>.cmds_opts () : Pair<List<String>,Map<String,String?>> {
             }
             .toMap()
     return Pair(cmds,opts)
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+fun String.to_Addr_Port () : Addr_Port {
+    val lst = this.split(":")
+    return when (lst.size) {
+        0    -> Addr_Port("localhost", PORT_8330)
+        1    -> Addr_Port(lst[0],      PORT_8330)
+        else -> Addr_Port(lst[0],      lst[1].toInt())
+    }
+}
+
+fun Addr_Port.from_Addr_Port () : String {
+    return "$first:$second"
 }
