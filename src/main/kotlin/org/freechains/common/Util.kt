@@ -22,6 +22,13 @@ const val min  = 60* sec
 const val hour = 60* min
 const val day  = 24* hour
 
+fun String.listSplit () : List<String> {
+    return when (this.isEmpty()) {
+        true  -> emptyList()
+        false -> this.split(' ')
+    }
+}
+
 fun Socket_5s (addr: String, port: Int) : Socket {
     val s = Socket(addr,port)
     s.soTimeout = 5000
