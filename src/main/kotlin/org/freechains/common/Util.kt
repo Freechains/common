@@ -6,6 +6,8 @@ import java.io.DataOutputStream
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 
+typealias HKey = String
+
 const val MAJOR    = 0
 const val MINOR    = 6
 const val REVISION = 2
@@ -24,15 +26,6 @@ fun Socket_5s (addr: String, port: Int) : Socket {
     val s = Socket(addr,port)
     s.soTimeout = 5000
     return s
-}
-
-fun String.hostSplit () : Pair<String,Int> {
-    val lst = this.split(":")
-    return when (lst.size) {
-        0 -> Pair("localhost", PORT_8330)
-        1 -> Pair(lst[0], PORT_8330)
-        else -> Pair(lst[0], lst[1].toInt())
-    }
 }
 
 inline fun assert_ (value: Boolean, lazyMessage: () -> Any = {"Assertion failed"}) {
