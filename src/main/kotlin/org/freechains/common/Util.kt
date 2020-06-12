@@ -83,7 +83,6 @@ fun main_catch_ (
         when {
             opts.containsKey("--help")    -> Pair(true,  help)
             opts.containsKey("--version") -> Pair(true,  version)
-            (cmds.size == 0)              -> Pair(false, help)
             else                          -> f(cmds, opts)
         }
     } catch (e: AssertionError) {
