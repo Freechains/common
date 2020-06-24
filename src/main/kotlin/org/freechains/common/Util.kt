@@ -10,7 +10,6 @@ import kotlin.system.exitProcess
 
 typealias HKey = String
 typealias Addr_Port = Pair<String,Int>
-typealias Wait = (() -> Unit)
 
 const val MAJOR    = 0
 const val MINOR    = 7
@@ -83,13 +82,14 @@ fun main_catch_ (
         when {
             opts.containsKey("--help")    -> Pair(true,  help)
             opts.containsKey("--version") -> Pair(true,  version)
+            cmds.size == 0                -> Pair(false, help)
             else                          -> f(cmds, opts)
         }
     } catch (e: AssertionError) {
-        if (e.message.equals("Assertion failed")) {
-            return Pair(false, "! TODO - $e - ${e.message} - $full")
-        } else {
-            return Pair(false, "! " + e.message!!)
+        return when {
+            e.message.equals("Assertion failed") -> Pair(false, "! TODO - $e - ${e.message} - $full")
+            e.message!!.startsWith('!') -> Pair(false, e.message!!)
+            else -> Pair(false, "! " + e.message!!)
         }
     } catch (e: ConnectException) {
         assert_(e.message == "Connection refused (Connection refused)")
@@ -116,7 +116,9 @@ fun DataInputStream.readLineX () : String {
         }
         ret.add(c)
     }
-    return ret.toByteArray().toString(Charsets.UTF_8)
+    val str = ret.toByteArray().toString(Charsets.UTF_8)
+    assert_(!str.startsWith('!')) { str }
+    return str
 }
 
 fun DataOutputStream.writeLineX (v: String) {
