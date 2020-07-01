@@ -1,11 +1,9 @@
 package org.freechains.common
 
-import org.freechains.cli.main_cli
-import java.net.Socket
 import java.io.DataInputStream
 import java.io.DataOutputStream
-import java.net.ConnectException
-import java.net.SocketTimeoutException
+import java.net.*
+import java.util.*
 import kotlin.system.exitProcess
 
 typealias HKey = String
