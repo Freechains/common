@@ -11,7 +11,7 @@ typealias Addr_Port = Pair<String,Int>
 
 const val MAJOR    = 0
 const val MINOR    = 7
-const val REVISION = 5
+const val REVISION = 6
 const val VERSION  = "v$MAJOR.$MINOR.$REVISION"
 const val PRE      = "FC $VERSION"
 
@@ -94,6 +94,8 @@ fun main_catch_ (
         return Pair(false, "! connection refused")
     } catch (e: SocketTimeoutException) {
         return Pair(false, "! connection timeout")
+    } catch (e: UnknownHostException) {
+        return Pair(false, "! invalid host")
     } catch (e: Throwable) {
         return Pair(false, "! TODO - $e - ${e.message} - $full")
     }
