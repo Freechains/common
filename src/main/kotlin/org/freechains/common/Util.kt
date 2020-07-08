@@ -36,7 +36,7 @@ fun String.listSplit () : List<String> {
 
 fun Socket_5s (addr: String, port: Int) : Socket {
     val s = Socket(addr,port)
-    s.soTimeout = T5S_socket.toInt()
+    //s.soTimeout = T5S_socket.toInt()
     return s
 }
 
