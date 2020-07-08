@@ -89,6 +89,8 @@ fun main_catch_ (
             e.message!!.startsWith('!') -> Pair(false, e.message!!)
             else -> Pair(false, "! " + e.message!!)
         }
+    } catch (e: java.io.EOFException) {
+        return Pair(false, "! connection closed")
     } catch (e: ConnectException) {
         assert_(e.message == "Connection refused (Connection refused)")
         return Pair(false, "! connection refused")
