@@ -11,7 +11,7 @@ typealias Addr_Port = Pair<String,Int>
 
 const val MAJOR    = 0
 const val MINOR    = 7
-const val REVISION = 8
+const val REVISION = 9
 const val VERSION  = "v$MAJOR.$MINOR.$REVISION"
 const val PRE      = "FC $VERSION"
 
@@ -99,6 +99,7 @@ fun main_catch_ (
     } catch (e: UnknownHostException) {
         return Pair(false, "! invalid host")
     } catch (e: Throwable) {
+        //System.err.println(e.stackTrace.contentToString())
         return Pair(false, "! TODO - $e - ${e.message} - $full")
     }
 }
